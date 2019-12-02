@@ -1,18 +1,12 @@
 import os
 
 # #configfile contains the sample wildcards and the paramater variables
+#not surrently in use
 configfile: "config.yaml"
 
 #glob_wildcards
 SAMPLES, = glob_wildcards("data/{sample}.fasta")
 
-# run the following line of code first, straight into the bash terminal
-# cd to the data directory, run the code, then cd bask into snakemake-blast
-### rule samples_generation:
-####	shell: "ls *.fasta > ../samplestest.txt"
-
-
-# SAMPLE = list(set([line.strip() for line in open ("samples.txt")]))
 
 ### this is the target rule that snakemake will rely on if not given a target.
 ### also assists in buildings dags
@@ -30,7 +24,7 @@ rule all:
 # 		"scripts/dagmaker.sh"
 
 
-### this rule sends a query sequece to genbank and pulls the top 100 results
+### this rule sends a query sequece to genbank and pulls the top x results
 rule blast:
 	input:
 		"data/{sample}.fasta"
@@ -40,7 +34,7 @@ rule blast:
 		"blastn -db nt -query {input} -out {output} -evalue 0.001 -max_target_seqs 5 -outfmt '10 sacc' -num_threads 12"
 
 
-
+#data transformation
 rule acc_transform:
 	input:
 		"blast_out_accs/{sample}"
@@ -51,7 +45,7 @@ rule acc_transform:
 
 
 #this next rule requires genbank login email
-# this is currently grahams but needs to be made modular and eidtable from the configfile
+# this is currently grahams login but needs to be made modular and editable from the configfile
 rule genbank_pull:
 	input:
 		"blast_out_accs/{sample}"
@@ -81,7 +75,7 @@ rule add_query_msa:
 	shell:
 		"cat {input} > {output}"
 
-
+#mafft being mafft
 rule mafft:
 	input:
 		"pre_mafft/{sample}"
@@ -90,17 +84,12 @@ rule mafft:
 	shell:
 		"mafft --auto {input} > {output}"
 
-# #auto - Automatically selects an appropriate strategy from L-INS-i, FFT-NS-i and FFT-NS-2,
-# #		according to data size. Default: off (always FFT-NS-2)
-
-# #localpair - All pairwise alignments are computed with the Smith-Waterman algorithm.
-# #		more accurate but slower than --6merpair. Suitable for a set of locally alignable
-# #		sequences. Applicable to up to ~200 sequences. A combination with --maxiterate 1000 is
-# #		recommended (L-INS-i). Default: off (6mer distance is used)
+## auto - Automatically selects an appropriate strategy from L-INS-i, FFT-NS-i and FFT-NS-2,
+#		according to data size. Default: off (always FFT-NS-2)
 
 
-# #trimal cleans the ends of the alignment
-rule trimal: # alignment curation
+## trimal cleans the ends of the alignment
+rule trimal:
     input:
         "mafft_out/{sample}"
     output:
@@ -109,7 +98,7 @@ rule trimal: # alignment curation
         "trimal -in {input} -out {output} -gappyout -keepheader"
 
 
-# #this rule processes an msa into a newick
+## this rule processes an msa into a newick
 rule fasttree:
 	input:
 		"trimal/{sample}"
@@ -117,11 +106,12 @@ rule fasttree:
 		"newicks/{sample}.tree"
 	shell:
 		"FastTree -gtr -nt {input} > {output}"
-# #GTR - GTR+CAT model. Generalised time-reversible
-# # https://hpc-carpentry.github.io/hpc-python/15-snakemake-python/
+## GTR - GTR+CAT model. Generalised time-reversible
+## https://hpc-carpentry.github.io/hpc-python/15-snakemake-python/
 
 
-# #this will write/draw a phylogeny from a newick file
+## this will write/draw a phylogeny from a newick file
+## currently basic af
 rule ete3:
 	input:
 		"newicks/{sample}.tree"
