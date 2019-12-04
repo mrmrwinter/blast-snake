@@ -1,6 +1,6 @@
 from ete3 import Tree, TreeStyle, TextFace, faces, AttrFace, NodeStyle, PhyloTree
 
-    t = Tree(snakemake.input[0])
+t = Tree(snakemake.input[0])
 
     #### here to .....
     #     ts = TreeStyle()
@@ -16,7 +16,7 @@ from ete3 import Tree, TreeStyle, TextFace, faces, AttrFace, NodeStyle, PhyloTre
 
 
 	# midpoint root a tree
-    root_point = t.get_midpoint_outgroup()
-    t.set_outgroup(root_point)
+root_point = t.get_midpoint_outgroup()
+t.set_outgroup(root_point)
 
-    t.render(snakemake.output[0])
+t.render(snakemake.output[0])

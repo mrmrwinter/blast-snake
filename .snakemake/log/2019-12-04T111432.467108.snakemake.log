@@ -1,0 +1,18 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1
+
+[Wed Dec  4 11:14:32 2019]
+localrule all:
+    input: plots/Pongo_abelii.pdf
+    jobid: 0
+
+[Wed Dec  4 11:14:32 2019]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /home/531734/mike/blast-snake/.snakemake/log/2019-12-04T111432.467108.snakemake.log

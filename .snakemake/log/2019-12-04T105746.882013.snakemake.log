@@ -1,0 +1,36 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	add_query_msa
+	1	all
+	1	ete3
+	1	fasttree
+	1	gb_parsing
+	1	gb_pull
+	1	mafft
+	1	trimal
+	8
+
+[Wed Dec  4 10:57:46 2019]
+rule gb_pull:
+    input: data/blast_out_accs/Pongo_abelii
+    output: data/pulled_gb/Pongo_abelii.gb
+    jobid: 7
+    wildcards: sample=Pongo_abelii
+
+[Wed Dec  4 10:57:47 2019]
+Error in rule gb_pull:
+    jobid: 7
+    output: data/pulled_gb/Pongo_abelii.gb
+
+RuleException:
+CalledProcessError in line 90 of /home/531734/mike/blast-snake/Snakefile:
+Command 'set -euo pipefail;  /home/531734/.conda/envs/blastsnake/bin/python3.6 /home/531734/mike/blast-snake/.snakemake/scripts/tmphw57dse5.gb_pull.py' returned non-zero exit status 1.
+  File "/home/531734/mike/blast-snake/Snakefile", line 90, in __rule_gb_pull
+  File "/home/531734/.conda/envs/blastsnake/lib/python3.6/concurrent/futures/thread.py", line 56, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/531734/mike/blast-snake/.snakemake/log/2019-12-04T105746.882013.snakemake.log

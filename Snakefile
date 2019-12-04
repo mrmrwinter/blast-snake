@@ -58,8 +58,7 @@ rule blast:
 	output:
 		"data/blast_out_accs/{sample}"
 	shell:
-		"blastn -db nt -query {input} -out {output} -evalue 0.001 \
-		-max_target_seqs 5 -outfmt '10 sacc' -num_threads 12"
+		"blastn -db nt -query {input} -out {output} -evalue 0.001 -max_target_seqs 5 -outfmt '10 sacc' -remote"
 
 ################################################################################
 
@@ -105,12 +104,23 @@ rule gb_parsing:
 
 ################################################################################
 
+#### TRANSFORM SPACES TO UNDERSCORES
+# this will transform all spaces to underscores
+
+rule sed_space2underscore:
+	input:
+		"data/parsed_gb/{sample}"
+	output:
+		"data/trans_gb/{sample}"
+	shell:
+		"sed -e 's/ /_/g' {input} > {output}"
+
 #### ADD QUERY TO MSA
 # This adds the query sequence to their respective multi-fasta of hits
 # This allows us to plot them in the tree with their respective BLASTN hits
 rule add_query_msa:
 	input:
-		"data/parsed_gb/{sample}",
+		"data/trans_gb/{sample}",
 		"data/queries/{sample}.fasta"
 	output:
 		"data/pre_mafft/{sample}"
@@ -171,7 +181,7 @@ rule ete3:
 	output:
 		"plots/{sample}.pdf"
 	script:
-		"scripts/apebg.py"
+		"scripts/ete.py"
 
 ################################################################################
 

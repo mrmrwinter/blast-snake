@@ -1,0 +1,102 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	add_query_msa
+	1	all
+	1	ete3
+	1	fasttree
+	1	gb_parsing
+	1	gb_pull
+	1	mafft
+	1	trimal
+	8
+
+[Wed Dec  4 10:58:19 2019]
+rule gb_pull:
+    input: data/blast_out_accs/Pongo_abelii
+    output: data/pulled_gb/Pongo_abelii.gb
+    jobid: 7
+    wildcards: sample=Pongo_abelii
+
+[Wed Dec  4 10:58:21 2019]
+Finished job 7.
+1 of 8 steps (12%) done
+
+[Wed Dec  4 10:58:21 2019]
+rule gb_parsing:
+    input: data/pulled_gb/Pongo_abelii.gb
+    output: data/parsed_gb/Pongo_abelii
+    jobid: 6
+    wildcards: sample=Pongo_abelii
+
+[Wed Dec  4 10:58:21 2019]
+Finished job 6.
+2 of 8 steps (25%) done
+
+[Wed Dec  4 10:58:21 2019]
+rule add_query_msa:
+    input: data/parsed_gb/Pongo_abelii, data/queries/Pongo_abelii.fasta
+    output: data/pre_mafft/Pongo_abelii
+    jobid: 5
+    wildcards: sample=Pongo_abelii
+
+[Wed Dec  4 10:58:21 2019]
+Finished job 5.
+3 of 8 steps (38%) done
+
+[Wed Dec  4 10:58:21 2019]
+rule mafft:
+    input: data/pre_mafft/Pongo_abelii
+    output: data/mafft_out/Pongo_abelii
+    jobid: 4
+    wildcards: sample=Pongo_abelii
+
+[Wed Dec  4 10:58:28 2019]
+Finished job 4.
+4 of 8 steps (50%) done
+
+[Wed Dec  4 10:58:28 2019]
+rule trimal:
+    input: data/mafft_out/Pongo_abelii
+    output: data/trimal/Pongo_abelii
+    jobid: 3
+    wildcards: sample=Pongo_abelii
+
+[Wed Dec  4 10:58:28 2019]
+Finished job 3.
+5 of 8 steps (62%) done
+
+[Wed Dec  4 10:58:28 2019]
+rule fasttree:
+    input: data/trimal/Pongo_abelii
+    output: data/newicks/Pongo_abelii.tree
+    jobid: 2
+    wildcards: sample=Pongo_abelii
+
+[Wed Dec  4 10:58:28 2019]
+Finished job 2.
+6 of 8 steps (75%) done
+
+[Wed Dec  4 10:58:28 2019]
+rule ete3:
+    input: data/newicks/Pongo_abelii.tree
+    output: plots/Pongo_abelii.pdf
+    jobid: 1
+    wildcards: sample=Pongo_abelii
+
+[Wed Dec  4 10:58:29 2019]
+Error in rule ete3:
+    jobid: 1
+    output: plots/Pongo_abelii.pdf
+
+RuleException:
+CalledProcessError in line 173 of /home/531734/mike/blast-snake/Snakefile:
+Command 'set -euo pipefail;  /home/531734/.conda/envs/blastsnake/bin/python3.6 /home/531734/mike/blast-snake/.snakemake/scripts/tmpdfa6jk2e.apebg.py' returned non-zero exit status 1.
+  File "/home/531734/mike/blast-snake/Snakefile", line 173, in __rule_ete3
+  File "/home/531734/.conda/envs/blastsnake/lib/python3.6/concurrent/futures/thread.py", line 56, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/531734/mike/blast-snake/.snakemake/log/2019-12-04T105819.867567.snakemake.log

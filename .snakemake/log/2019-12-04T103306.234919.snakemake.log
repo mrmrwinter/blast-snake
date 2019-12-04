@@ -1,0 +1,35 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	add_query_msa
+	1	all
+	1	blast
+	1	ete3
+	1	fasttree
+	1	gb_parsing
+	1	gb_pull
+	1	mafft
+	1	trimal
+	9
+
+[Wed Dec  4 10:33:06 2019]
+rule blast:
+    input: data/queries/Pongo_abelii.fasta
+    output: data/blast_out_accs/Pongo_abelii
+    jobid: 8
+    wildcards: sample=Pongo_abelii
+
+[Wed Dec  4 10:33:06 2019]
+Error in rule blast:
+    jobid: 8
+    output: data/blast_out_accs/Pongo_abelii
+    shell:
+        blastn -db nt -query data/queries/Pongo_abelii.fasta -out data/blast_out_accs/Pongo_abelii -evalue 0.001 		-max_target_seqs 5 -outfmt '10 sacc' -num_threads 12
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/531734/mike/blast-snake/.snakemake/log/2019-12-04T103306.234919.snakemake.log
