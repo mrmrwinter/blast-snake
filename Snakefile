@@ -39,7 +39,7 @@ configfile: "config.yaml"   #not surrently in use
 
 #This relies on all files in data/query/ have the suffix ".fasta"
 #glob_wildcards
-SAMPLES, = glob_wildcards("data/{sample}.fasta")
+SAMPLES, = glob_wildcards("data/queries/{sample}.fasta")
 
 ### this is the target rule that snakemake will rely on if not given a target.
 ### also assists in buildings dags
@@ -54,7 +54,7 @@ rule all:
 # in the form of accession numbers
 rule blast:
 	input:
-		"data/query/{sample}.fasta"
+		"data/queries/{sample}.fasta"
 	output:
 		"data/blast_out_accs/{sample}"
 	shell:
@@ -111,7 +111,7 @@ rule gb_parsing:
 rule add_query_msa:
 	input:
 		"data/parsed_gb/{sample}",
-		"data/query/{sample}.fasta"
+		"data/queries/{sample}.fasta"
 	output:
 		"data/pre_mafft/{sample}"
 	shell:
@@ -151,9 +151,9 @@ rule trimal:
 # This is necessary to plot a phylogeny
 rule fasttree:
 	input:
-		"trimal/{sample}"
+		"data/trimal/{sample}"
 	output:
-		"newicks/{sample}.tree"
+		"data/newicks/{sample}.tree"
 	shell:
 		"FastTree -gtr -nt {input} > {output}"
 
@@ -167,11 +167,11 @@ rule fasttree:
 # This is currently in a very barebones state
 rule ete3:
 	input:
-		"newicks/{sample}.tree"
+		"data/newicks/{sample}.tree"
 	output:
 		"plots/{sample}.pdf"
 	script:
-		"scripts/ete.py"
+		"scripts/apebg.py"
 
 ################################################################################
 
