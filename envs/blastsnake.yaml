@@ -1,4 +1,4 @@
-name: blast-snake
+name: blastsnake
 channels:
   - etetoolkit
   - conda-forge
