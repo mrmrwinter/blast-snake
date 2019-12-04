@@ -14,4 +14,9 @@ from ete3 import Tree, TreeStyle, TextFace, faces, AttrFace, NodeStyle, PhyloTre
     # get_farthest_oldest_node
     ### ...here, is not working as it should. Read the documentation and figure out how it works cause ete seems pretty good once it's properly jammed through.
 
+
+	# midpoint root a tree
+    root_point = t.get_midpoint_outgroup()
+    t.set_outgroup(root_point)
+
     t.render(snakemake.output[0])
