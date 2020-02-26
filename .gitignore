@@ -1,0 +1,9 @@
+data/t*
+data/n*
+data/m*
+data/p*
+data/b*
+data/queries/*
+plots/*
+.snakemake
+.git

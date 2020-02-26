@@ -1,43 +1,9 @@
                        ######### BLAST-SNAKE #########
 
-## BLAST-Snake will take any number of query sequences in FASTA format and
-#  output a plotted phylogeny.
-
-## To install dependencies to run BLAST-Snake, perform the following steps:
-
-		# Install conda.
-			# 1. Download a conda version
-				# https://docs.conda.io/en/latest/miniconda.html
-			# 2. Run the downloaded file from the /home/ directory.
-			 	# $ bash Downloads/*-latest-Linux-x86_64.sh
-			# 3. Accept defaults and install.
-
-		# Create environment.
-			# 1. Navigate to the BLAST-Snake directory.
-			# 2. Create the environment from file.
-				# $ conda env create --file envs/blast-snake.yaml
-			# 3. Activate the new environment
-
-## To run BLAST-Snake:
-
-			# Navigate to the BLAST-snake/ directory.
-			# Ensure environment is activated.
-			# Place query FASTAs in data/query/
-			# Ensure queries have the suffix ".fasta"
-
-			# To run the Snake for all files in data/query/
-				# $ snakemake
-
-			# To run the Snake for a specific file in data/query/
-				# $ snakemake <specific file>
-
 ################################################################################
-import os  #Cant remember why this is here. Test breaking it
 
-configfile: "config.yaml"   #not surrently in use
+configfile: "config.yaml"
 
-
-#This relies on all files in data/query/ have the suffix ".fasta"
 #glob_wildcards
 SAMPLES, = glob_wildcards("data/queries/{sample}.fasta")
 
@@ -53,6 +19,8 @@ rule all:
 # This rule sends a query sequence to genbank and pulls the top 'x' results
 # in the form of accession numbers
 rule blast:
+	conda:
+		"envs/blastsnake.yaml"
 	input:
 		"data/queries/{sample}.fasta"
 	output:
@@ -82,6 +50,8 @@ rule blast:
 # needs to be made modular and editable from the configfile.
 # This rule pulls the genbank file that correlates with the accession numbers.
 rule gb_pull:
+	conda:
+		"envs/blastsnake.yaml"
 	input:
 		"data/blast_out_accs/{sample}"
 	output:
@@ -95,7 +65,9 @@ rule gb_pull:
 # This code will parse a genbank file and write a fasta containing the sequence,
 # and the GI, accession, and species name in the header.
 rule gb_parsing:
- 	input:
+	conda:
+		"envs/blastsnake.yaml"
+	input:
  		"data/pulled_gb/{sample}.gb"
 	output:
 		"data/parsed_gb/{sample}"
@@ -108,6 +80,8 @@ rule gb_parsing:
 # this will transform all spaces to underscores
 
 rule sed_space2underscore:
+	conda:
+		"envs/blastsnake.yaml"
 	input:
 		"data/parsed_gb/{sample}"
 	output:
@@ -119,11 +93,13 @@ rule sed_space2underscore:
 # This adds the query sequence to their respective multi-fasta of hits
 # This allows us to plot them in the tree with their respective BLASTN hits
 rule add_query_msa:
+	conda:
+		"envs/blastsnake.yaml"
 	input:
 		"data/trans_gb/{sample}",
 		"data/queries/{sample}.fasta"
 	output:
-		"data/pre_mafft/{sample}"
+		"data/pre_mafft/{sample}.msa"
 	shell:
 		"cat {input} > {output}"
 
@@ -133,10 +109,12 @@ rule add_query_msa:
 # MAFFT takes multiple FASTAs and aligns them based on homology
 # This outputs an msa (multiple sequence alignment)
 rule mafft:
+	conda:
+		"envs/blastsnake.yaml"
 	input:
-		"data/pre_mafft/{sample}"
+		"data/pre_mafft/{sample}.msa"
 	output:
-		"data/mafft_out/{sample}"
+		"data/mafft_out/{sample}.aln"
 	shell:
 		"mafft --auto {input} > {output}"
 
@@ -146,12 +124,14 @@ rule mafft:
 # Trimal cleans the ends of the alignment
 # Uneven sequences in an alignment can disrupt the output
 rule trimal:
-    input:
-        "data/mafft_out/{sample}"
-    output:
-        "data/trimal/{sample}"
-    shell:
-        "trimal -in {input} -out {output} -gappyout -keepheader"
+	conda:
+		"envs/blastsnake.yaml"
+	input:
+		"data/mafft_out/{sample}.aln"
+	output:
+		"data/trimal/{sample}.tml.aln"
+	shell:
+		"trimal -in {input} -out {output} -gappyout -keepheader"
 
 ################################################################################
 
@@ -160,8 +140,10 @@ rule trimal:
 # Newick files contain information about sequences relationships to each other
 # This is necessary to plot a phylogeny
 rule fasttree:
+	conda:
+		"envs/blastsnake.yaml"
 	input:
-		"data/trimal/{sample}"
+		"data/trimal/{sample}.tml.aln"
 	output:
 		"data/newicks/{sample}.tree"
 	shell:
@@ -176,6 +158,8 @@ rule fasttree:
 # This will write/draw a phylogeny from a newick file
 # This is currently in a very barebones state
 rule ete3:
+	conda:
+		"envs/blastsnake.yaml"
 	input:
 		"data/newicks/{sample}.tree"
 	output:
