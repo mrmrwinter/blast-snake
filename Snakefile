@@ -56,6 +56,8 @@ rule gb_pull:
 		"data/blast_out_accs/{sample}"
 	output:
 		"data/pulled_gb/{sample}.gb"
+	params:
+		"g.sellers@2011.hull.ac.uk"
 	script:
 		"scripts/gb_pull.py"
 
